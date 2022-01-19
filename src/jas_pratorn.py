@@ -67,6 +67,7 @@ class RunGUI(QMainWindow):
         self.soundList = []
         self.currentSound = 0
         self.soundPlaying = -1
+        self.soundPlayingType = 0
         self.xp = XPlaneUdp.XPlaneUdp(XPLANE_IP,SEND_PORT)
         self.xp.getDataref("sim/flightmodel/position/indicated_airspeed",1)
 
@@ -113,6 +114,7 @@ class RunGUI(QMainWindow):
         
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/mkv", "larm/mkv"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/transsonik", "larm/9beep"))
+        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde", "larm/9beep"))
     
 
         pass
@@ -135,6 +137,11 @@ class RunGUI(QMainWindow):
         self.xp.readData()
         if (self.soundPlaying != -1):
             if (self.soundList[self.soundPlaying].qs.isFinished()):
+                
+                if (self.soundPlayingType == 1):
+                    self.xp.sendDataref(self.soundList[self.soundPlaying].dataref, 0)
+                    print("stoppar ljud", self.soundPlaying)
+                    
                 self.soundPlaying = -1
                 self.currentSound += 1
                 if (self.currentSound>=len(self.soundList)):
@@ -143,20 +150,25 @@ class RunGUI(QMainWindow):
                 return
         
         for i in range(len(self.soundList)):
-            print("test", self.currentSound)
+            
             status = self.xp.getDataref(self.soundList[self.currentSound].dataref,10)
             if (status == 1):
                 self.soundList[self.currentSound].qs.play()
                 self.soundPlaying = self.currentSound
-                self.xp.sendDataref(self.soundList[self.currentSound].dataref, 0)
+                self.soundPlayingType = 1
+                print("startar ljud", self.currentSound)
+                self.xp.sendDataref(self.soundList[self.soundPlaying].dataref, 0)
+                
                 return
             if (status == 2):
                 self.soundList[self.currentSound].qs.play()
                 self.soundPlaying = self.currentSound
+                self.soundPlayingType = 2
                 return
             if (status == 3): # Ej klart, ska spela mindre ofta va det tänkt
                 self.soundList[self.currentSound].qs.play()
                 self.soundPlaying = self.currentSound
+                self.soundPlayingType = 3
                 return
             
             self.currentSound += 1
