@@ -68,6 +68,8 @@ class RunGUI(QMainWindow):
         self.currentSound = 0
         self.soundPlaying = -1
         self.soundPlayingType = 0
+        self.heartbeat = 0
+        
         self.xp = XPlaneUdp.XPlaneUdp(XPLANE_IP,SEND_PORT)
         self.xp.getDataref("sim/flightmodel/position/indicated_airspeed",1)
 
@@ -158,18 +160,17 @@ class RunGUI(QMainWindow):
                 self.soundPlayingType = 1
                 print("startar ljud", self.currentSound)
                 self.xp.sendDataref(self.soundList[self.soundPlaying].dataref, 0)
-                
-                return
+                break
             if (status == 2):
                 self.soundList[self.currentSound].qs.play()
                 self.soundPlaying = self.currentSound
                 self.soundPlayingType = 2
-                return
+                break
             if (status == 3): # Ej klart, ska spela mindre ofta va det tänkt
                 self.soundList[self.currentSound].qs.play()
                 self.soundPlaying = self.currentSound
                 self.soundPlayingType = 3
-                return
+                break
             
             self.currentSound += 1
             if (self.currentSound>=len(self.soundList)):
@@ -178,6 +179,8 @@ class RunGUI(QMainWindow):
             
         
         #print(self.xp.dataList)
+        self.heartbeat += 1
+        self.xp.sendDataref("JAS/system/pratorn/heartbeat", self.heartbeat)
         self.timer.start(10)
         pass
         
