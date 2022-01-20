@@ -29,14 +29,12 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--nogui", help="Run without GUI", action="store_true")
-parser.add_argument("--file", help="Run selected file, use with --nogui")
+parser.add_argument("--ip", help="Ip address of X-plane")
 args = parser.parse_args()
-if args.nogui:
-    GUI = False
-    print("GUI turned off")
-else:
-    GUI = True
+
+if args.ip:
+    XPLANE_IP = args.ip
+print ("Connecting to ", XPLANE_IP)
 
 
 
