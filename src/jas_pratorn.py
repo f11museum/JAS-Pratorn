@@ -117,6 +117,8 @@ class RunGUI(QMainWindow):
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/mkv", "larm/mkv"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/transsonik", "larm/9beep"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde", "larm/9beep"))
+        
+        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/master", "larm/varn"))
     
 
         pass
@@ -180,7 +182,7 @@ class RunGUI(QMainWindow):
         
         #print(self.xp.dataList)
         self.heartbeat += 1
-        self.xp.sendDataref("JAS/system/pratorn/heartbeat", self.heartbeat)
+        self.xp.sendDataref("JAS/heartbeat/pratorn", self.heartbeat)
         self.timer.start(10)
         pass
         
