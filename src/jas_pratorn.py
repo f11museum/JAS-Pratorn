@@ -109,12 +109,12 @@ class RunGUI(QMainWindow):
         self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/ejtils", "tal/ejtils"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/hojd", "tal/hojd"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/marktryckfel", "tal/marktryckfel"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/transsonik", "tal/trannsonik"))
+        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/transsonik", "tal/trannsonik1"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/systemtest", "tal/systemtest"))
         
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/mkv", "larm/mkv"))
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/transsonik", "larm/9beep"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde", "larm/9beep"))
+        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde", "larm/beep"))
         
         self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/master", "larm/varn"))
     
