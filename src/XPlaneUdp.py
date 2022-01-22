@@ -18,7 +18,7 @@ class XPlaneUdp:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.setblocking(0)
-        self.sock.bind(("127.0.0.1", LISTEN_PORT))
+        self.sock.bind(("", LISTEN_PORT))
         self.sendList = []
         self.dataList = {}
         self.lastDataTimer = current_milli_time()
