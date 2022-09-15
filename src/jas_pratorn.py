@@ -56,6 +56,14 @@ class SoundEffect():
     def buttonPressed(self):
         print("buttonPressed2:", self.dataref)
         self.parent.xp.sendDataref(self.dataref, 1)
+class SoundSystem():
+    def __init__(self, index):
+        self.index = index
+        self.soundList = []
+        self.currentSound = 0
+        self.soundPlaying = -1
+        self.soundPlayingType = 0
+        
 
 class RunGUI(QMainWindow):
     def __init__(self,):
@@ -63,6 +71,7 @@ class RunGUI(QMainWindow):
 
         self.running = True
         self.soundList = []
+        self.sysList = []
         self.currentSound = 0
         self.soundPlaying = -1
         self.soundPlayingType = 0
@@ -100,23 +109,27 @@ class RunGUI(QMainWindow):
         self.timer.start(100)
 
     def initSounds(self):
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/spak", "tal/spak"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/taupp", "tal/taupp"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/okapadrag", "tal/okapadrag"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/alfa12", "tal/alfa12"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/fix", "tal/fix"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/minskafart", "tal/minskafart"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/ejtils", "tal/ejtils"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/hojd", "tal/hojd"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/marktryckfel", "tal/marktryckfel"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/transsonik", "tal/trannsonik1"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/tal/systemtest", "tal/systemtest"))
+        self.sysList.append(SoundSystem(0)) # Pipljud
+        self.sysList.append(SoundSystem(1)) # Prat
         
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/mkv", "larm/mkv"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/transsonik", "larm/9beep"))
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde", "larm/beep"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/spak", "tal/spak"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/taupp", "tal/taupp"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/okapadrag", "tal/okapadrag"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/alfa12", "tal/alfa12"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/fix", "tal/fix"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/minskafart", "tal/minskafart"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/ejtils", "tal/ejtils"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/hojd", "tal/hojd"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/marktryckfel", "tal/marktryckfel"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/transsonik", "tal/trannsonik1"))
+        self.sysList[1].soundList.append(SoundEffect(self, "JAS/pratorn/tal/systemtest", "tal/systemtest"))
         
-        self.soundList.append(SoundEffect(self, "JAS/pratorn/larm/master", "larm/varn"))
+        self.sysList[0].soundList.append(SoundEffect(self, "JAS/pratorn/larm/mkv", "larm/mkv"))
+        self.sysList[0].soundList.append(SoundEffect(self, "JAS/pratorn/larm/transsonik", "larm/9beep"))
+        self.sysList[0].soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde", "larm/beep"))
+        self.sysList[0].soundList.append(SoundEffect(self, "JAS/pratorn/larm/gransvarde_g", "larm/beep_g"))
+        
+        self.sysList[0].soundList.append(SoundEffect(self, "JAS/pratorn/larm/master", "larm/varn"))
     
 
         pass
@@ -137,45 +150,46 @@ class RunGUI(QMainWindow):
     def loop(self):
         # print("loop")
         self.xp.readData()
-        if (self.soundPlaying != -1):
-            if (self.soundList[self.soundPlaying].qs.isFinished()):
-                
-                if (self.soundPlayingType == 1):
-                    self.xp.sendDataref(self.soundList[self.soundPlaying].dataref, 0)
-                    print("stoppar ljud", self.soundPlaying)
+        for ss in self.sysList:
+            if (ss.soundPlaying != -1):
+                if (ss.soundList[ss.soundPlaying].qs.isFinished()):
                     
-                self.soundPlaying = -1
-                self.currentSound += 1
-                if (self.currentSound>=len(self.soundList)):
-                    self.currentSound = 0
-            else:
-                return
-        
-        for i in range(len(self.soundList)):
+                    if (ss.soundPlayingType == 1):
+                        self.xp.sendDataref(ss.soundList[ss.soundPlaying].dataref, 0)
+                        print("stoppar ljud", ss.soundPlaying)
+                        
+                    ss.soundPlaying = -1
+                    ss.currentSound += 1
+                    if (ss.currentSound>=len(ss.soundList)):
+                        ss.currentSound = 0
+                else:
+                    return
             
-            status = self.xp.getDataref(self.soundList[self.currentSound].dataref,10)
-            if (status == 1):
-                self.soundList[self.currentSound].qs.play()
-                self.soundPlaying = self.currentSound
-                self.soundPlayingType = 1
-                print("startar ljud", self.currentSound)
-                self.xp.sendDataref(self.soundList[self.soundPlaying].dataref, 0)
-                break
-            if (status == 2):
-                self.soundList[self.currentSound].qs.play()
-                self.soundPlaying = self.currentSound
-                self.soundPlayingType = 2
-                break
-            if (status == 3): # Ej klart, ska spela mindre ofta va det tänkt
-                self.soundList[self.currentSound].qs.play()
-                self.soundPlaying = self.currentSound
-                self.soundPlayingType = 3
-                break
-            
-            self.currentSound += 1
-            if (self.currentSound>=len(self.soundList)):
-                self.currentSound = 0
-            # print("soundlist", se.name)
+            for i in range(len(ss.soundList)):
+                
+                status = self.xp.getDataref(ss.soundList[ss.currentSound].dataref,10)
+                if (status == 1):
+                    ss.soundList[ss.currentSound].qs.play()
+                    ss.soundPlaying = ss.currentSound
+                    ss.soundPlayingType = 1
+                    print("startar ljud", ss.currentSound)
+                    self.xp.sendDataref(ss.soundList[ss.soundPlaying].dataref, 0)
+                    break
+                if (status == 2):
+                    ss.soundList[ss.currentSound].qs.play()
+                    ss.soundPlaying = ss.currentSound
+                    ss.soundPlayingType = 2
+                    break
+                if (status == 3): # Ej klart, ska spela mindre ofta va det tänkt
+                    ss.soundList[ss.currentSound].qs.play()
+                    ss.soundPlaying = ss.currentSound
+                    ss.soundPlayingType = 3
+                    break
+                
+                ss.currentSound += 1
+                if (ss.currentSound>=len(ss.soundList)):
+                    ss.currentSound = 0
+                # print("soundlist", se.name)
             
         
         #print(self.xp.dataList)
