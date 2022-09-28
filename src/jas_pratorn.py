@@ -84,9 +84,9 @@ class RunGUI(QMainWindow):
         self.xp.getDataref("JAS/lamps/hojd",1)
         
         
-        self.q = QSound("sounds/systemtest.wav")
-        self.q.play()
-        
+        # self.q = QSound("sounds/systemtest.wav")
+        # self.q.play()
+        # 
         self.initUI()
         
     def initUI(self):
@@ -150,48 +150,52 @@ class RunGUI(QMainWindow):
     def loop(self):
         # print("loop")
         self.xp.readData()
-        for ss in self.sysList:
-            if (ss.soundPlaying != -1):
-                if (ss.soundList[ss.soundPlaying].qs.isFinished()):
-                    
-                    if (ss.soundPlayingType == 1):
-                        self.xp.sendDataref(ss.soundList[ss.soundPlaying].dataref, 0)
-                        print("stoppar ljud", ss.soundPlaying)
+        
+        
+        if (self.xp.getDataref("sim/flightmodel2/misc/has_crashed",1) == 0 and self.xp.getDataref("sim/time/paused",1) == 0):
+            
+            for ss in self.sysList:
+                if (ss.soundPlaying != -1):
+                    if (ss.soundList[ss.soundPlaying].qs.isFinished()):
                         
-                    ss.soundPlaying = -1
+                        if (ss.soundPlayingType == 1):
+                            self.xp.sendDataref(ss.soundList[ss.soundPlaying].dataref, 0)
+                            print("stoppar ljud", ss.soundPlaying)
+                            
+                        ss.soundPlaying = -1
+                        ss.currentSound += 1
+                        if (ss.currentSound>=len(ss.soundList)):
+                            ss.currentSound = 0
+                    else:
+                        return
+                
+                for i in range(len(ss.soundList)):
+                    
+                    status = self.xp.getDataref(ss.soundList[ss.currentSound].dataref,10)
+                    if (status == 1):
+                        ss.soundList[ss.currentSound].qs.play()
+                        ss.soundPlaying = ss.currentSound
+                        ss.soundPlayingType = 1
+                        print("startar ljud", ss.currentSound)
+                        self.xp.sendDataref(ss.soundList[ss.soundPlaying].dataref, 0)
+                        break
+                    if (status == 2):
+                        ss.soundList[ss.currentSound].qs.play()
+                        ss.soundPlaying = ss.currentSound
+                        ss.soundPlayingType = 2
+                        break
+                    if (status == 3): # Ej klart, ska spela mindre ofta va det tänkt
+                        ss.soundList[ss.currentSound].qs.play()
+                        ss.soundPlaying = ss.currentSound
+                        ss.soundPlayingType = 3
+                        break
+                    
                     ss.currentSound += 1
                     if (ss.currentSound>=len(ss.soundList)):
                         ss.currentSound = 0
-                else:
-                    return
-            
-            for i in range(len(ss.soundList)):
+                    # print("soundlist", se.name)
                 
-                status = self.xp.getDataref(ss.soundList[ss.currentSound].dataref,10)
-                if (status == 1):
-                    ss.soundList[ss.currentSound].qs.play()
-                    ss.soundPlaying = ss.currentSound
-                    ss.soundPlayingType = 1
-                    print("startar ljud", ss.currentSound)
-                    self.xp.sendDataref(ss.soundList[ss.soundPlaying].dataref, 0)
-                    break
-                if (status == 2):
-                    ss.soundList[ss.currentSound].qs.play()
-                    ss.soundPlaying = ss.currentSound
-                    ss.soundPlayingType = 2
-                    break
-                if (status == 3): # Ej klart, ska spela mindre ofta va det tänkt
-                    ss.soundList[ss.currentSound].qs.play()
-                    ss.soundPlaying = ss.currentSound
-                    ss.soundPlayingType = 3
-                    break
-                
-                ss.currentSound += 1
-                if (ss.currentSound>=len(ss.soundList)):
-                    ss.currentSound = 0
-                # print("soundlist", se.name)
             
-        
         #print(self.xp.dataList)
         self.heartbeat += 1
         self.xp.sendDataref("JAS/heartbeat/pratorn", self.heartbeat)
