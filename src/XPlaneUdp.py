@@ -53,6 +53,9 @@ class XPlaneUdp:
         except BlockingIOError:
             #print('no data')
             pass
+        except:
+            #print('no data')
+            pass
         
         
     def sendDataref(self, dataref, value):
