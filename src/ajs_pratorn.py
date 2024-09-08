@@ -126,7 +126,7 @@ class RunGUI(QMainWindow):
         
         self.sysList[0].soundList.append(SoundEffect(self, "AJ37/pratorn/larm/mkv", "37/mkv"))
         self.sysList[0].soundList.append(SoundEffect(self, "AJ37/pratorn/larm/transsonik", "37/Transonic"))
-        self.sysList[0].soundList.append(SoundEffect(self, "AJ37/pratorn/larm/gransvarde", "37/PreAlfaWarning"))
+        self.sysList[1].soundList.append(SoundEffect(self, "AJ37/pratorn/larm/gransvarde", "37/PreAlfaWarning"))
         self.sysList[0].soundList.append(SoundEffect(self, "AJ37/pratorn/larm/gransvarde_g", "37/GVVLastfaktor"))
         
         self.sysList[0].soundList.append(SoundEffect(self, "AJ37/pratorn/larm/master", "37/Huvudvarning"))
